@@ -1,0 +1,58 @@
+spring:
+  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://192.168.200.136:3306/lease?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
+    username: root
+    password: root
+    hikari:
+      connection-test-query: SELECT 1 # 自动检测连接
+      connection-timeout: 60000 #数据库连接超时时间,默认30秒
+      idle-timeout: 500000 #空闲连接存活最大时间，默认600000（10分钟）
+      max-lifetime: 540000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      maximum-pool-size: 12 #连接池最大连接数，默认是10
+      minimum-idle: 10 #最小空闲连接数量
+      pool-name: HikariPool # 连接池名称
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    druid:
+#      # 连接池配置
+#      initial-size: 10
+#      min-idle: 10
+#      max-active: 12
+#      max-wait: 60000
+#
+#      # 连接有效性检测配置 - MySQL 8.0 兼容
+#      validation-query: SELECT 1
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#
+#      # 连接超时和生命周期配置
+#      connect-timeout: 60000
+#      time-between-eviction-runs-millis: 60000
+#      min-evictable-idle-time-millis: 500000
+#      max-evictable-idle-time-millis: 540000
+#      # 连接池名称
+#      name: SPDDruidPool
+#
+#      # MySQL 8.0 特定优化
+#      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500;serverTimezone=Asia/Shanghai
+#
+#      # 监控统计配置
+#      filters: stat,wall,slf4j
+#      web-stat-filter:
+#        enabled: true
+#        url-pattern: /*
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+#      stat-view-servlet:
+#        enabled: true
+#        url-pattern: /druid/*
+#        reset-enable: false
+#        login-username: admin  # 监控页面登录用户名
+#        login-password: admin  # 监控页面登录密码
+
+
+#用于打印框架生成的sql语句，便于调试
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
