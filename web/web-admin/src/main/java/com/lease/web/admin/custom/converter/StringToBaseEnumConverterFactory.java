@@ -1,4 +1,4 @@
-package com.lease.web.admin.custom.config;
+package com.lease.web.admin.custom.converter;
 
 import com.lease.model.enums.BaseEnum;
 import org.springframework.core.convert.converter.Converter;
