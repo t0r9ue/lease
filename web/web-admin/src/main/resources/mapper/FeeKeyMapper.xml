@@ -14,4 +14,22 @@
     <!--@mbg.generated-->
     id, `name`, create_time, update_time, is_deleted
   </sql>
+
+  <resultMap id="feeKeyInfoResult" type="com.lease.web.admin.vo.fee.FeeKeyVo">
+    <id property="id" column="id"/>
+    <result property="name" column="key_name"/>
+    <collection property="feeValueList" ofType="com.lease.model.entity.FeeValue">
+      <id property="id" column="value_id"/>
+      <result property="feeKeyId" column="key_id"/>
+      <result property="unit" column="unit"/>
+      <result property="name" column="value_name"/>
+    </collection>
+  </resultMap>
+
+  <select id="selectFeeKeyInfo" resultMap="feeKeyInfoResult">
+    SELECT k.id, k.name key_name, v.id value_id, v.name value_name, v.unit, v.fee_key_id key_id
+    FROM fee_key k left join fee_value v
+    ON k.id = v.fee_key_id and v.is_deleted = 0
+    WHERE k.is_deleted = 0
+  </select>
 </mapper>
