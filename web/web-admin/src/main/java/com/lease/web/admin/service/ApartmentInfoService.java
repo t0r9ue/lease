@@ -2,6 +2,7 @@ package com.lease.web.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lease.model.entity.ApartmentInfo;
+import com.lease.web.admin.vo.apartment.ApartmentSubmitVo;
 
 /**
  * @author  孙依鹏
@@ -11,5 +12,5 @@ import com.lease.model.entity.ApartmentInfo;
     
 public interface ApartmentInfoService extends IService<ApartmentInfo>{
 
-
+	void saveOrUpdateApartmentInfo(ApartmentSubmitVo apartmentSubmitVo);
 }

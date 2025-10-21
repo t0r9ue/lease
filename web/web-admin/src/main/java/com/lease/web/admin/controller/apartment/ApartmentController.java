@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lease.common.result.Result;
 import com.lease.model.entity.ApartmentInfo;
 import com.lease.model.enums.ReleaseStatus;
+import com.lease.web.admin.service.ApartmentInfoService;
 import com.lease.web.admin.vo.apartment.ApartmentDetailVo;
 import com.lease.web.admin.vo.apartment.ApartmentItemVo;
 import com.lease.web.admin.vo.apartment.ApartmentQueryVo;
 import com.lease.web.admin.vo.apartment.ApartmentSubmitVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +21,15 @@ import java.util.List;
 @Tag(name = "公寓信息管理")
 @RestController
 @RequestMapping("/admin/apartment")
+@RequiredArgsConstructor
 public class ApartmentController {
+
+    private final ApartmentInfoService apartmentInfoService;
 
     @Operation(summary = "保存或更新公寓信息")
     @PostMapping("saveOrUpdate")
     public Result saveOrUpdate(@RequestBody ApartmentSubmitVo apartmentSubmitVo) {
+        apartmentInfoService.saveOrUpdateApartmentInfo(apartmentSubmitVo);
         return Result.ok();
     }
 
