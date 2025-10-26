@@ -17,4 +17,10 @@
     <!--@mbg.generated-->
     id, `name`, item_type, item_id, url, create_time, update_time, is_deleted
   </sql>
+
+  <select id="selectNameAndUrlByApartmentIdAndItemType" resultType="com.lease.web.admin.vo.graph.GraphVo">
+    SELECT url, name
+    FROM graph_info
+    WHERE is_deleted = 0 AND item_id = #{id} AND item_type = #{itemType}
+  </select>
 </mapper>

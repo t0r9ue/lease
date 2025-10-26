@@ -2,6 +2,7 @@ package com.lease.web.admin.controller.apartment;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lease.common.result.Result;
 import com.lease.model.entity.ApartmentInfo;
 import com.lease.model.enums.ReleaseStatus;
@@ -36,13 +37,16 @@ public class ApartmentController {
     @Operation(summary = "根据条件分页查询公寓列表")
     @GetMapping("pageItem")
     public Result<IPage<ApartmentItemVo>> pageItem(@RequestParam long current, @RequestParam long size, ApartmentQueryVo queryVo) {
-        return Result.ok();
+        IPage<ApartmentItemVo> apartmentItemVoPage = new Page<>(current, size);
+        IPage<ApartmentItemVo> result = apartmentInfoService.pageItem(apartmentItemVoPage, queryVo);
+        return Result.ok(result);
     }
 
     @Operation(summary = "根据ID获取公寓详细信息")
     @GetMapping("getDetailById")
     public Result<ApartmentDetailVo> getDetailById(@RequestParam Long id) {
-        return Result.ok();
+        ApartmentDetailVo detailVo = apartmentInfoService.getDetailById(id);
+        return Result.ok(detailVo);
     }
 
     @Operation(summary = "根据id删除公寓信息")

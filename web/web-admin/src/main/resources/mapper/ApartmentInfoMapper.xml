@@ -1,31 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lease.web.admin.mapper.ApartmentInfoMapper">
-  <resultMap id="BaseResultMap" type="com.lease.model.entity.ApartmentInfo">
-    <!--@mbg.generated-->
-    <!--@Table apartment_info-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="introduction" jdbcType="VARCHAR" property="introduction" />
-    <result column="district_id" jdbcType="BIGINT" property="districtId" />
-    <result column="district_name" jdbcType="VARCHAR" property="districtName" />
-    <result column="city_id" jdbcType="BIGINT" property="cityId" />
-    <result column="city_name" jdbcType="VARCHAR" property="cityName" />
-    <result column="province_id" jdbcType="BIGINT" property="provinceId" />
-    <result column="province_name" jdbcType="VARCHAR" property="provinceName" />
-    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
-    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
-    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="is_release" jdbcType="TINYINT" property="isRelease" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, `name`, introduction, district_id, district_name, city_id, city_name, province_id, 
-    province_name, address_detail, latitude, longitude, phone, is_release, create_time, 
-    update_time, is_deleted
-  </sql>
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.ApartmentInfo">
+        <!--@mbg.generated-->
+        <!--@Table apartment_info-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="district_id" jdbcType="BIGINT" property="districtId"/>
+        <result column="district_name" jdbcType="VARCHAR" property="districtName"/>
+        <result column="city_id" jdbcType="BIGINT" property="cityId"/>
+        <result column="city_name" jdbcType="VARCHAR" property="cityName"/>
+        <result column="province_id" jdbcType="BIGINT" property="provinceId"/>
+        <result column="province_name" jdbcType="VARCHAR" property="provinceName"/>
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail"/>
+        <result column="latitude" jdbcType="VARCHAR" property="latitude"/>
+        <result column="longitude" jdbcType="VARCHAR" property="longitude"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="is_release" jdbcType="TINYINT" property="isRelease"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        `name`,
+        introduction,
+        district_id,
+        district_name,
+        city_id,
+        city_name,
+        province_id,
+        province_name,
+        address_detail,
+        latitude,
+        longitude,
+        phone,
+        is_release
+    </sql>
+
+    <select id="selectByPage" resultType="com.lease.web.admin.vo.apartment.ApartmentItemVo">
+        SELECT
+               <include refid="Base_Column_List"/>,
+               ifnull(tc.cnt, 0) total_room_count,
+               ifnull(tc.cnt, 0) - ifnull(cc.cnt, 0) free_room_count
+        FROM
+        (SELECT id,
+                name,
+                introduction,
+                district_id,
+                district_name,
+                city_id,
+                city_name,
+                province_id,
+                province_name,
+                address_detail,
+                latitude,
+                longitude,
+                phone,
+                is_release
+         FROM apartment_info
+        <where>
+            is_release = 1 and is_deleted = 0
+            <if test="queryVo.provinceId != null">
+                and province_id = #{queryVo.provinceId}
+            </if>
+            <if test="queryVo.cityId != null">
+                and city_id = #{queryVo.cityId}
+            </if>
+            <if test="queryVo.districtId != null">
+                and district_id = #{queryVo.districtId}
+            </if>
+        </where>
+        ) ai
+            LEFT JOIN
+        (SELECT apartment_id, count(*) cnt
+         FROM room_info
+         WHERE is_deleted = 0
+           and is_release = 1
+         GROUP BY apartment_id) tc
+        ON id = tc.apartment_id
+            LEFT JOIN
+        (SELECT apartment_id, count(*) cnt
+         FROM lease_agreement
+         WHERE is_deleted = 0
+           and status in (1, 2, 5, 7)
+         GROUP BY apartment_id) cc
+        ON id = cc.apartment_id
+    </select>
 </mapper>
