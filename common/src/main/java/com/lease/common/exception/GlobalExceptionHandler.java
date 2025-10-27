@@ -28,15 +28,15 @@ public class GlobalExceptionHandler {
 		return Result.build(null, ResultCodeEnum.FAIL);
 	}
 
-//	/**
-//	 * 处理业务异常
-//	 */
-//	@ExceptionHandler(BusinessException.class)
-//	@ResponseBody
-//	public Result<Void> handleBusinessException(BusinessException e) {
-//		log.warn("业务异常: {}", e.getMessage());
-//		return Result.fail(e.getCode(), e.getMessage());
-//	}
+	/**
+	 * 处理业务异常
+	 */
+	@ExceptionHandler(LeaseException.class)
+	@ResponseBody
+	public Result<Void> handleBusinessException(LeaseException e) {
+		log.warn("业务异常: {}", e.getMessage());
+		return Result.fail(e.getCode(), e.getMessage());
+	}
 //
 //	/**
 //	 * 处理参数校验异常

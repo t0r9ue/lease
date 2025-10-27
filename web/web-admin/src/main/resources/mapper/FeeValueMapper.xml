@@ -31,6 +31,6 @@
           AND v.is_deleted = 0
           AND v.id in (SELECT id
                        FROM apartment_fee_value
-                       WHERE apartment_id = #{id})
+                       WHERE apartment_id = #{id} AND is_deleted = 0)
     </select>
 </mapper>

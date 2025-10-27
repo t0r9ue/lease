@@ -1,6 +1,8 @@
 package com.lease.web.admin.controller.apartment;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lease.common.result.Result;
@@ -52,19 +54,28 @@ public class ApartmentController {
     @Operation(summary = "根据id删除公寓信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
+        apartmentInfoService.removeByApartmentId(id);
         return Result.ok();
     }
 
     @Operation(summary = "根据id修改公寓发布状态")
     @PostMapping("updateReleaseStatusById")
     public Result updateReleaseStatusById(@RequestParam Long id, @RequestParam ReleaseStatus status) {
+        LambdaUpdateWrapper<ApartmentInfo> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(ApartmentInfo::getId, id);
+        updateWrapper.set(ApartmentInfo::getIsRelease, status);
+        apartmentInfoService.update(updateWrapper);
         return Result.ok();
     }
 
     @Operation(summary = "根据区县id查询公寓信息列表")
     @GetMapping("listInfoByDistrictId")
     public Result<List<ApartmentInfo>> listInfoByDistrictId(@RequestParam Long id) {
-        return Result.ok();
+        LambdaQueryWrapper<ApartmentInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ApartmentInfo::getDistrictId, id);
+        queryWrapper.eq(ApartmentInfo::getIsRelease, ReleaseStatus.RELEASED);
+        List<ApartmentInfo> apartmentInfoList = apartmentInfoService.list(queryWrapper);
+        return Result.ok(apartmentInfoList);
     }
 }
 
