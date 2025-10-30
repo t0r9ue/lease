@@ -18,9 +18,6 @@
         <result column="longitude" jdbcType="VARCHAR" property="longitude"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="is_release" jdbcType="TINYINT" property="isRelease"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->

@@ -1,20 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lease.web.admin.mapper.RoomInfoMapper">
-  <resultMap id="BaseResultMap" type="com.lease.model.entity.RoomInfo">
-    <!--@mbg.generated-->
-    <!--@Table room_info-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
-    <result column="rent" jdbcType="DECIMAL" property="rent" />
-    <result column="apartment_id" jdbcType="BIGINT" property="apartmentId" />
-    <result column="is_release" jdbcType="TINYINT" property="isRelease" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, room_number, rent, apartment_id, is_release, create_time, update_time, is_deleted
-  </sql>
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.RoomInfo">
+        <!--@mbg.generated-->
+        <!--@Table room_info-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="room_number" jdbcType="VARCHAR" property="roomNumber"/>
+        <result column="rent" jdbcType="DECIMAL" property="rent"/>
+        <result column="apartment_id" jdbcType="BIGINT" property="apartmentId"/>
+        <result column="is_release" jdbcType="TINYINT" property="isRelease"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        room_number,
+        rent,
+        apartment_id,
+        is_release,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <resultMap id="ApartmentInfo" type="com.lease.model.entity.ApartmentInfo" autoMapping="true">
+        <id property="id" column="apartment_info_id"/>
+        <result property="name" column="apartment_name"/>
+        <result property="isRelease" column="apartment_is_release"/>
+    </resultMap>
+
+    <resultMap id="RoomItemVo" type="com.lease.web.admin.vo.room.RoomItemVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <association resultMap="ApartmentInfo" property="apartmentInfo"
+                     javaType="com.lease.model.entity.ApartmentInfo"/>
+    </resultMap>
+
+    <select id="selectRoomItemByPage" resultMap="RoomItemVo">
+        SELECT ri.id,
+               ri.room_number,
+               ri.rent,
+               ri.apartment_id,
+               ri.is_release,
+               ai.id apartment_info_id,
+               ai.name apartment_name,
+               ai.introduction,
+               ai.district_id,
+               ai.district_name,
+               ai.city_id,
+               ai.city_name,
+               ai.province_id,
+               ai.province_name,
+               ai.address_detail,
+               ai.latitude,
+               ai.longitude,
+               ai.phone,
+               ai.is_release apartment_is_release,
+               la.lease_end_date,
+               la.status,
+                CASE
+                    WHEN la.status in (4) THEN true
+                    ELSE false
+                END as is_CheckIn
+        FROM room_info ri
+                 JOIN apartment_info ai
+                      ON ri.apartment_id = ai.id
+                 LEFT JOIN lease_agreement la on ri.id = la.room_id
+        <where>
+            ri.is_deleted = 0
+            AND ri.is_release = 1
+            AND ai.is_deleted = 0
+            AND ai.is_release = 1
+            <if test="param2.provinceId != null">
+                AND province_id = #{param2.provinceId,jdbcType=BIGINT}
+            </if>
+            <if test="param2.cityId != null">
+                AND city_id = #{param2.cityId,jdbcType=BIGINT}
+            </if>
+            <if test="param2.districtId != null">
+                AND district_id = #{param2.districtId,jdbcType=BIGINT}
+            </if>
+            <if test="param2.apartmentId != null">
+                AND ai.id = #{param2.apartmentId,jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
 </mapper>

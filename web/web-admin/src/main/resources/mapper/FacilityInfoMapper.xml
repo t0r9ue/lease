@@ -24,8 +24,19 @@
         SELECT id, type, name, icon
         FROM facility_info
         WHERE is_deleted = 0
-          AND id in (SELECT apartment_facility.id
+          AND id in (SELECT facility_id
                      FROM apartment_facility
-                     WHERE apartment_id = #{id})
+                     WHERE apartment_id = #{id}
+                       AND is_deleted = 0)
+    </select>
+
+    <select id="selectListByRoomId" resultMap="BaseResultMap">
+        SELECT id, type, name, icon
+        FROM facility_info
+        WHERE is_deleted = 0
+          AND id in (SELECT facility_id
+                     FROM room_facility
+                     WHERE room_id = #{id}
+                       AND is_deleted = 0)
     </select>
 </mapper>

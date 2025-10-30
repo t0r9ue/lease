@@ -115,7 +115,7 @@ public class ApartmentInfoServiceImpl extends ServiceImpl<ApartmentInfoMapper, A
 		//1、公寓信息
 		ApartmentInfo apartmentInfo = apartmentInfoMapper.selectById(id);
 		//2、图片列表
-		List<GraphVo> graphVos = graphInfoMapper.selectNameAndUrlByApartmentIdAndItemType(ItemType.APARTMENT, id);
+		List<GraphVo> graphVos = graphInfoMapper.selectNameAndUrlByItemIdAndItemType(ItemType.APARTMENT, id);
 		//3、标签列表
 		List<LabelInfo> labelInfos = labelInfoMapper.selectListByApartmentId(id);
 		//4、配套列表
