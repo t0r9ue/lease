@@ -1,7 +1,12 @@
 package com.lease.web.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lease.model.entity.RoomInfo;
+import com.lease.web.admin.vo.room.RoomDetailVo;
+import com.lease.web.admin.vo.room.RoomItemVo;
+import com.lease.web.admin.vo.room.RoomQueryVo;
+import com.lease.web.admin.vo.room.RoomSubmitVo;
 
 /**
  * @author  孙依鹏
@@ -11,5 +16,11 @@ import com.lease.model.entity.RoomInfo;
     
 public interface RoomInfoService extends IService<RoomInfo>{
 
+	void saveOrUpdateRoomInfo(RoomSubmitVo roomSubmitVo);
 
+	IPage<RoomItemVo> pageItem(IPage<RoomItemVo> roomDetailVoPage, RoomQueryVo queryVo);
+
+	RoomDetailVo getRoomDetailById(Long id);
+
+	void removeByRoomId(Long id);
 }

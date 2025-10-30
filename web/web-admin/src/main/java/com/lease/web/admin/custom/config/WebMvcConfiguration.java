@@ -1,5 +1,6 @@
 package com.lease.web.admin.custom.config;
 
+import com.lease.web.admin.custom.converter.StringToBaseEnumConverterFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
