@@ -3,6 +3,7 @@ package com.lease;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author 孙依鹏
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @create 2025/10/10
  */
 @SpringBootApplication
+@EnableScheduling
 @MapperScan("com.lease.web.*.mapper")
 public class AdminWebApplication {
 
