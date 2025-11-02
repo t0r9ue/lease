@@ -1,26 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lease.web.admin.mapper.SystemUserMapper">
-  <resultMap id="BaseResultMap" type="com.lease.model.entity.SystemUser">
-    <!--@mbg.generated-->
-    <!--@Table `system_user`-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="TINYINT" property="type" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
-    <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo" />
-    <result column="post_id" jdbcType="BIGINT" property="postId" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, username, `password`, `name`, `type`, phone, avatar_url, additional_info, post_id, 
-    `status`, create_time, update_time, is_deleted
-  </sql>
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.SystemUser">
+        <!--@mbg.generated-->
+        <!--@Table `system_user`-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo"/>
+        <result column="post_id" jdbcType="BIGINT" property="postId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        username,
+        `password`,
+        `name`,
+        `type`,
+        phone,
+        avatar_url,
+        additional_info,
+        post_id,
+        `status`,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <select id="selectUserItemByPage" resultType="com.lease.web.admin.vo.system.user.SystemUserItemVo">
+        SELECT su.id,
+               su.username,
+               su.name,
+               su.type,
+               su.phone,
+               su.avatar_url,
+               su.additional_info,
+               su.post_id,
+               su.status,
+               sp.name post_name
+        FROM system_user su
+                 LEFT JOIN system_post sp
+                           ON su.post_id = sp.id AND sp.is_deleted = 0
+        <where>
+            su.is_deleted = 0
+            <if test="queryVo.name != null and queryVo.name != ''">
+                AND su.name like concat('%', #{queryVo.name}, '%')
+            </if>
+            <if test="queryVo.phone != null and queryVo.phone != ''">
+                AND su.phone like concat('%', #{queryVo.phone}, '%')
+            </if>
+        </where>
+    </select>
 </mapper>
