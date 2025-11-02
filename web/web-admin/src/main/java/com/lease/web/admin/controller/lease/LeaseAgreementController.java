@@ -1,7 +1,9 @@
 package com.lease.web.admin.controller.lease;
 
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lease.common.result.Result;
 import com.lease.model.entity.LeaseAgreement;
 import com.lease.model.enums.LeaseStatus;
@@ -32,24 +34,32 @@ public class LeaseAgreementController {
     @Operation(summary = "根据条件分页查询租约列表")
     @GetMapping("page")
     public Result<IPage<AgreementVo>> page(@RequestParam long current, @RequestParam long size, AgreementQueryVo queryVo) {
-        return Result.ok();
+        IPage<AgreementVo> agreementVoPage = new Page<>(current, size);
+        IPage<AgreementVo> resultPage = leaseAgreementService.pageItem(agreementVoPage, queryVo);
+        return Result.ok(resultPage);
     }
 
     @Operation(summary = "根据id查询租约信息")
     @GetMapping(name = "getById")
     public Result<AgreementVo> getById(@RequestParam Long id) {
-        return Result.ok();
+        AgreementVo agreementVo = leaseAgreementService.getAgreementVoById(id);
+        return Result.ok(agreementVo);
     }
 
     @Operation(summary = "根据id删除租约信息")
     @DeleteMapping("removeById")
     public Result removeById(@RequestParam Long id) {
+        leaseAgreementService.removeById(id);
         return Result.ok();
     }
 
     @Operation(summary = "根据id更新租约状态")
     @PostMapping("updateStatusById")
     public Result updateStatusById(@RequestParam Long id, @RequestParam LeaseStatus status) {
+        LambdaUpdateWrapper<LeaseAgreement> updateWrapper = new LambdaUpdateWrapper<LeaseAgreement>()
+                .eq(LeaseAgreement::getId, id)
+                .set(LeaseAgreement::getStatus, status);
+        leaseAgreementService.update(updateWrapper);
         return Result.ok();
     }
 
