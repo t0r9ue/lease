@@ -14,9 +14,6 @@
         <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo"/>
         <result column="post_id" jdbcType="BIGINT" property="postId"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
-        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -58,5 +55,11 @@
                 AND su.phone like concat('%', #{queryVo.phone}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT id, username, password, name, type, phone, avatar_url, additional_info, post_id, status
+        FROM system_user
+        WHERE is_deleted = 0 AND username = #{username,jdbcType=VARCHAR}
     </select>
 </mapper>

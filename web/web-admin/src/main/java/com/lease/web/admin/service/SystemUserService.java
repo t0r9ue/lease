@@ -18,4 +18,6 @@ public interface SystemUserService extends IService<SystemUser>{
 	IPage<SystemUserItemVo> findUserItemVoByPage(Page<SystemUserItemVo> objectPage, SystemUserQueryVo queryVo);
 
 	SystemUserItemVo findUserDetailById(Long id);
+
+	SystemUser findUserByUsername(String username);
 }

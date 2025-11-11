@@ -41,4 +41,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 		systemUserItemVo.setPostName(systemPost.getName());
 		return systemUserItemVo;
 	}
+
+	@Override
+	public SystemUser findUserByUsername(String username) {
+		return systemUserMapper.selectByUsername(username);
+	}
+
 }
