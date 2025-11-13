@@ -16,6 +16,13 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  data:
+    redis:
+      host: 192.168.200.136
+      port: 6379
+      database: 0
+      timeout: 3000ms
+      password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    druid:
 #      # 连接池配置
