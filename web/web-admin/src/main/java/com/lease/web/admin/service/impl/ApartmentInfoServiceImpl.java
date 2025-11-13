@@ -63,7 +63,7 @@ public class ApartmentInfoServiceImpl extends ServiceImpl<ApartmentInfoMapper, A
 					.map(graphVo -> {
 						GraphInfo graphInfo = new GraphInfo();
 						graphInfo.setName(graphVo.getName());
-						graphInfo.setUrl(graphInfo.getUrl());
+						graphInfo.setUrl(graphVo.getUrl());
 						graphInfo.setItemId(apartmentId);
 						graphInfo.setItemType(ItemType.APARTMENT);
 						return graphInfo;

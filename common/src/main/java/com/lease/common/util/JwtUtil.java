@@ -31,7 +31,7 @@ public class JwtUtil {
 		return jwt;
 	}
 
-	public static void parseToken(String token) {
+	public static Claims parseToken(String token) {
 		if (!StringUtils.hasText(token)) {
 			throw new LeaseException(ResultCodeEnum.ADMIN_LOGIN_AUTH);
 		}
@@ -39,7 +39,7 @@ public class JwtUtil {
 			JwtParser jwtParser = Jwts.parserBuilder()
 					.setSigningKey(secretKey)
 					.build();
-			jwtParser.parseClaimsJws(token);
+			return jwtParser.parseClaimsJws(token).getBody();
 		} catch (ExpiredJwtException e) {
 			throw new LeaseException(ResultCodeEnum.TOKEN_EXPIRED);
 		} catch (JwtException e) {

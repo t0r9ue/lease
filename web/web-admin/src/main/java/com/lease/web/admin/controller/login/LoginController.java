@@ -1,6 +1,8 @@
 package com.lease.web.admin.controller.login;
 
 
+import com.lease.common.login.LoginUser;
+import com.lease.common.login.LoginUserHolder;
 import com.lease.common.result.Result;
 import com.lease.web.admin.service.LoginService;
 import com.lease.web.admin.vo.login.CaptchaVo;
@@ -36,6 +38,8 @@ public class LoginController {
     @Operation(summary = "获取登陆用户个人信息")
     @GetMapping("info")
     public Result<SystemUserInfoVo> info() {
-        return Result.ok();
+        LoginUser loginUser = LoginUserHolder.getLoginUser();
+        SystemUserInfoVo userInfoVo = loginService.getUserInfo(loginUser.getUsername());
+        return Result.ok(userInfoVo);
     }
 }

@@ -11,6 +11,7 @@ import com.lease.web.admin.service.LoginService;
 import com.lease.web.admin.service.SystemUserService;
 import com.lease.web.admin.vo.login.CaptchaVo;
 import com.lease.web.admin.vo.login.LoginVo;
+import com.lease.web.admin.vo.system.user.SystemUserInfoVo;
 import com.wf.captcha.SpecCaptcha;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -75,5 +76,14 @@ public class LoginServiceImpl implements LoginService {
 		}
 		//3 返回jwt
 		return JwtUtil.createToken(systemUser.getId(), systemUser.getUsername());
+	}
+
+	@Override
+	public SystemUserInfoVo getUserInfo(String username) {
+		SystemUser systemUser = systemUserService.findUserByUsername(username);
+		SystemUserInfoVo userInfoVo = new SystemUserInfoVo();
+		userInfoVo.setName(systemUser.getName());
+		userInfoVo.setAvatarUrl(systemUser.getAvatarUrl());
+		return userInfoVo;
 	}
 }
