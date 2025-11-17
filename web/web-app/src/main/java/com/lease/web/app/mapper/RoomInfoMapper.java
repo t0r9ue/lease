@@ -1,7 +1,10 @@
 package com.lease.web.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lease.model.entity.RoomInfo;
+import com.lease.web.app.vo.room.RoomItemVo;
+import com.lease.web.app.vo.room.RoomQueryVo;
 
 /**
  * @author  孙依鹏
@@ -10,4 +13,5 @@ import com.lease.model.entity.RoomInfo;
  */
     
 public interface RoomInfoMapper extends BaseMapper<RoomInfo> {
+	IPage<RoomItemVo> selectRoomItemByPage(IPage<RoomItemVo> roomItemVoPage, RoomQueryVo queryVo);
 }
