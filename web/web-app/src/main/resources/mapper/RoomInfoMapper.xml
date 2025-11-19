@@ -105,4 +105,42 @@
         WHERE is_deleted = 0
           and id in (SELECT label_id FROM room_label WHERE is_deleted = 0 and room_id = #{id})
     </select>
+
+    <select id="selectMinRentByApartmentId" resultType="java.math.BigDecimal">
+        SELECT min(rent)
+        FROM room_info
+        WHERE is_deleted = 0
+          AND is_release = 1
+          AND apartment_id = #{apartmentId,jdbcType=BIGINT}
+        GROUP BY apartment_id
+    </select>
+
+    <select id="selectRoomItemPageByApartmentId" resultMap="RoomItemVoMap">
+        SELECT ri.id,
+               ri.room_number,
+               ri.rent,
+               ai.id apartment_id,
+               ai.name,
+               ai.introduction,
+               ai.district_id,
+               ai.district_name,
+               ai.city_id,
+               ai.city_name,
+               ai.province_id,
+               ai.province_name,
+               ai.address_detail,
+               ai.latitude,
+               ai.longitude,
+               ai.phone,
+               ai.is_release
+        FROM room_info ri
+                 JOIN apartment_info ai
+                      ON ri.apartment_id = ai.id
+        WHERE ri.is_deleted = 0
+          and ri.is_release = 1
+          and ai.is_deleted = 0
+          and ai.is_release = 1
+          and ri.id not in (SELECT room_id FROM lease_agreement WHERE is_deleted = 0 and status in (1, 2, 5, 7))
+          and ai.id = #{apartmentId}
+    </select>
 </mapper>

@@ -2,15 +2,24 @@ package com.lease.web.app.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.lease.model.entity.RoomInfo;
+import com.lease.model.entity.*;
+import com.lease.model.enums.ItemType;
 import com.lease.web.app.mapper.RoomInfoMapper;
-import com.lease.web.app.service.RoomInfoService;
+import com.lease.web.app.service.*;
+import com.lease.web.app.vo.apartment.ApartmentItemVo;
+import com.lease.web.app.vo.attr.AttrValueVo;
+import com.lease.web.app.vo.fee.FeeValueVo;
+import com.lease.web.app.vo.graph.GraphVo;
+import com.lease.web.app.vo.room.RoomDetailVo;
 import com.lease.web.app.vo.room.RoomItemVo;
 import com.lease.web.app.vo.room.RoomQueryVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author liubo
@@ -24,6 +33,14 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
         implements RoomInfoService {
 
 	private final RoomInfoMapper roomInfoMapper;
+	private final ApartmentInfoService apartmentInfoService;
+	private final GraphInfoService graphInfoService;
+	private final AttrValueService attrValueService;
+	private final FacilityInfoService facilityInfoService;
+	private final LabelInfoService labelInfoService;
+	private final PaymentTypeService paymentTypeService;
+	private final FeeValueService feeValueService;
+	private final LeaseTermService leaseTermService;
 
 	@Override
 	public IPage<RoomItemVo> findRoomItemByPage(IPage<RoomItemVo> roomItemVoPage, RoomQueryVo queryVo) {
@@ -35,6 +52,45 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 			log.error("根本原因:", e.getCause());
 		}
 		return roomItemVoIPage;
+	}
+
+	@Override
+	public RoomDetailVo findDetailById(Long id) {
+		//1 房间信息
+		RoomInfo roomInfo = super.getById(id);
+		//2 公寓信息
+		ApartmentItemVo apartmentItemVo = apartmentInfoService.findApartmentItemById(roomInfo.getApartmentId());
+		//3 图片列表
+		List<GraphVo> graphVoList = graphInfoService.findByItemIdAndItemType(id, ItemType.ROOM);
+		//4 属性信息列表
+		List<AttrValueVo> attrValueVoList = attrValueService.getAttrValueVoByRoomId(roomInfo.getId());
+		//5 配套信息列表
+		List<FacilityInfo> facilityInfoList = facilityInfoService.getByRoomId(roomInfo.getId());
+		//6 标签信息列表
+		List<LabelInfo> labelInfoList = labelInfoService.getByRoomId(roomInfo.getId());
+		//7 支付方式列表
+		List<PaymentType> paymentTypeList = paymentTypeService.getByRoomId(roomInfo.getId());
+		//8 杂费列表
+		List<FeeValueVo> feeValueVoList = feeValueService.getByApartmentId(roomInfo.getApartmentId());
+		//9 租期列表
+		List<LeaseTerm> leaseTermList = leaseTermService.getByRoomId(roomInfo.getId());
+
+		RoomDetailVo roomDetailVo = new RoomDetailVo();
+		BeanUtils.copyProperties(roomInfo, roomDetailVo);
+		roomDetailVo.setGraphVoList(graphVoList);
+		roomDetailVo.setAttrValueVoList(attrValueVoList);
+		roomDetailVo.setApartmentItemVo(apartmentItemVo);
+		roomDetailVo.setFacilityInfoList(facilityInfoList);
+		roomDetailVo.setLabelInfoList(labelInfoList);
+		roomDetailVo.setPaymentTypeList(paymentTypeList);
+		roomDetailVo.setFeeValueVoList(feeValueVoList);
+		roomDetailVo.setLeaseTermList(leaseTermList);
+		return roomDetailVo;
+	}
+
+	@Override
+	public IPage<RoomItemVo> findRoomItemPageByApartmentId(IPage<RoomItemVo> roomItemVoPage, Long id) {
+		return roomInfoMapper.selectRoomItemPageByApartmentId(roomItemVoPage, id);
 	}
 }
 

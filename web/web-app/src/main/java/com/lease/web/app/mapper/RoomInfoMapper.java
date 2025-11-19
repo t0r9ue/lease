@@ -6,6 +6,8 @@ import com.lease.model.entity.RoomInfo;
 import com.lease.web.app.vo.room.RoomItemVo;
 import com.lease.web.app.vo.room.RoomQueryVo;
 
+import java.math.BigDecimal;
+
 /**
  * @author  孙依鹏
  * @version 1.0
@@ -14,4 +16,8 @@ import com.lease.web.app.vo.room.RoomQueryVo;
     
 public interface RoomInfoMapper extends BaseMapper<RoomInfo> {
 	IPage<RoomItemVo> selectRoomItemByPage(IPage<RoomItemVo> roomItemVoPage, RoomQueryVo queryVo);
+
+	BigDecimal selectMinRentByApartmentId(Long apartmentId);
+
+	IPage<RoomItemVo> selectRoomItemPageByApartmentId(IPage<RoomItemVo> roomItemVoPage, Long apartmentId);
 }

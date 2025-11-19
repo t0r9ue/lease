@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lease.web.app.mapper.PaymentTypeMapper">
-  <resultMap id="BaseResultMap" type="com.lease.model.entity.PaymentType">
-    <!--@mbg.generated-->
-    <!--@Table payment_type-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="pay_month_count" jdbcType="INTEGER" property="payMonthCount" />
-    <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, `name`, pay_month_count, additional_info, create_time, update_time, is_deleted
-  </sql>
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.PaymentType">
+        <!--@mbg.generated-->
+        <!--@Table payment_type-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="pay_month_count" jdbcType="INTEGER" property="payMonthCount"/>
+        <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        `name`,
+        pay_month_count,
+        additional_info,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <select id="selectByRoomId" resultMap="BaseResultMap">
+        SELECT pt.id,
+               pt.name,
+               pt.pay_month_count,
+               pt.additional_info
+        FROM payment_type pt
+                 JOIN room_payment_type rpt
+                      ON pt.id = rpt.payment_type_id
+        WHERE pt.is_deleted = 0
+          AND rpt.is_deleted = 0
+          AND rpt.room_id = #{roomId,jdbcType=BIGINT}
+    </select>
 </mapper>
