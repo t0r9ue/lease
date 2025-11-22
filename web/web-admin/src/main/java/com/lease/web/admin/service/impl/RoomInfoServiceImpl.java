@@ -3,6 +3,8 @@ package com.lease.web.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lease.common.constant.RedisConstant;
+import com.lease.common.util.RedisUtil;
 import com.lease.model.entity.*;
 import com.lease.model.enums.ItemType;
 import com.lease.web.admin.mapper.*;
@@ -45,6 +47,8 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo> i
 	private final PaymentTypeMapper paymentTypeMapper;
 	private final LeaseTermMapper leaseTermMapper;
 	private final ApartmentInfoMapper apartmentInfoMapper;
+
+	private final RedisUtil redisUtil;
 
 	@Override
 	public void saveOrUpdateRoomInfo(RoomSubmitVo roomSubmitVo) {
@@ -118,6 +122,9 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo> i
 							.build()).toList();
 			roomLeaseTermService.saveBatch(roomLeaseTermList);
 		}
+
+		//4 删除redis中的roomDetail
+		redisUtil.del(RedisConstant.APP_ROOM_PREFIX + roomId);
 	}
 
 	@Override
@@ -160,6 +167,8 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo> i
 	public void removeByRoomId(Long id) {
 		super.removeById(id);
 		this.removeRoomRelevant(id);
+		//删除redis中的roomDetail
+		redisUtil.del(RedisConstant.APP_ROOM_PREFIX + id);
 	}
 
 	private void removeRoomRelevant(Long roomId) {

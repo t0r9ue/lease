@@ -2,7 +2,9 @@ package com.lease.web.app.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lease.common.constant.RedisConstant;
 import com.lease.common.login.LoginUserHolder;
+import com.lease.common.util.RedisUtil;
 import com.lease.model.entity.*;
 import com.lease.model.enums.ItemType;
 import com.lease.web.app.mapper.RoomInfoMapper;
@@ -44,6 +46,8 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 	private final LeaseTermService leaseTermService;
 	private final BrowsingHistoryService browsingHistoryService;
 
+	private final RedisUtil redisUtil;
+
 	@Override
 	public IPage<RoomItemVo> findRoomItemByPage(IPage<RoomItemVo> roomItemVoPage, RoomQueryVo queryVo) {
 		IPage<RoomItemVo> roomItemVoIPage = null;
@@ -58,35 +62,43 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 
 	@Override
 	public RoomDetailVo findDetailById(Long id) {
-		//1 房间信息
-		RoomInfo roomInfo = super.getById(id);
-		//2 公寓信息
-		ApartmentItemVo apartmentItemVo = apartmentInfoService.findApartmentItemById(roomInfo.getApartmentId());
-		//3 图片列表
-		List<GraphVo> graphVoList = graphInfoService.findByItemIdAndItemType(id, ItemType.ROOM);
-		//4 属性信息列表
-		List<AttrValueVo> attrValueVoList = attrValueService.getAttrValueVoByRoomId(roomInfo.getId());
-		//5 配套信息列表
-		List<FacilityInfo> facilityInfoList = facilityInfoService.getByRoomId(roomInfo.getId());
-		//6 标签信息列表
-		List<LabelInfo> labelInfoList = labelInfoService.getByRoomId(roomInfo.getId());
-		//7 支付方式列表
-		List<PaymentType> paymentTypeList = paymentTypeService.getByRoomId(roomInfo.getId());
-		//8 杂费列表
-		List<FeeValueVo> feeValueVoList = feeValueService.getByApartmentId(roomInfo.getApartmentId());
-		//9 租期列表
-		List<LeaseTerm> leaseTermList = leaseTermService.getByRoomId(roomInfo.getId());
 
-		RoomDetailVo roomDetailVo = new RoomDetailVo();
-		BeanUtils.copyProperties(roomInfo, roomDetailVo);
-		roomDetailVo.setGraphVoList(graphVoList);
-		roomDetailVo.setAttrValueVoList(attrValueVoList);
-		roomDetailVo.setApartmentItemVo(apartmentItemVo);
-		roomDetailVo.setFacilityInfoList(facilityInfoList);
-		roomDetailVo.setLabelInfoList(labelInfoList);
-		roomDetailVo.setPaymentTypeList(paymentTypeList);
-		roomDetailVo.setFeeValueVoList(feeValueVoList);
-		roomDetailVo.setLeaseTermList(leaseTermList);
+		String roomDetailKey = RedisConstant.APP_ROOM_PREFIX + id;
+		RoomDetailVo roomDetailVo = (RoomDetailVo) redisUtil.get(roomDetailKey);
+		if(roomDetailVo == null){
+			//1 房间信息
+			RoomInfo roomInfo = super.getById(id);
+			//2 公寓信息
+			ApartmentItemVo apartmentItemVo = apartmentInfoService.findApartmentItemById(roomInfo.getApartmentId());
+			//3 图片列表
+			List<GraphVo> graphVoList = graphInfoService.findByItemIdAndItemType(id, ItemType.ROOM);
+			//4 属性信息列表
+			List<AttrValueVo> attrValueVoList = attrValueService.getAttrValueVoByRoomId(roomInfo.getId());
+			//5 配套信息列表
+			List<FacilityInfo> facilityInfoList = facilityInfoService.getByRoomId(roomInfo.getId());
+			//6 标签信息列表
+			List<LabelInfo> labelInfoList = labelInfoService.getByRoomId(roomInfo.getId());
+			//7 支付方式列表
+			List<PaymentType> paymentTypeList = paymentTypeService.getByRoomId(roomInfo.getId());
+			//8 杂费列表
+			List<FeeValueVo> feeValueVoList = feeValueService.getByApartmentId(roomInfo.getApartmentId());
+			//9 租期列表
+			List<LeaseTerm> leaseTermList = leaseTermService.getByRoomId(roomInfo.getId());
+
+			roomDetailVo = new RoomDetailVo();
+			BeanUtils.copyProperties(roomInfo, roomDetailVo);
+			roomDetailVo.setGraphVoList(graphVoList);
+			roomDetailVo.setAttrValueVoList(attrValueVoList);
+			roomDetailVo.setApartmentItemVo(apartmentItemVo);
+			roomDetailVo.setFacilityInfoList(facilityInfoList);
+			roomDetailVo.setLabelInfoList(labelInfoList);
+			roomDetailVo.setPaymentTypeList(paymentTypeList);
+			roomDetailVo.setFeeValueVoList(feeValueVoList);
+			roomDetailVo.setLeaseTermList(leaseTermList);
+
+			//10 把数据保存在redis中
+			redisUtil.set(roomDetailKey, roomDetailVo);
+		}
 
 		// 保存浏览历史
 		browsingHistoryService.saveHistoryByRoomId(id, LoginUserHolder.getLoginUser().getUserId());
