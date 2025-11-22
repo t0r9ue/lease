@@ -2,6 +2,7 @@ package com.lease.web.app.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lease.common.login.LoginUserHolder;
 import com.lease.model.entity.*;
 import com.lease.model.enums.ItemType;
 import com.lease.web.app.mapper.RoomInfoMapper;
@@ -41,6 +42,7 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 	private final PaymentTypeService paymentTypeService;
 	private final FeeValueService feeValueService;
 	private final LeaseTermService leaseTermService;
+	private final BrowsingHistoryService browsingHistoryService;
 
 	@Override
 	public IPage<RoomItemVo> findRoomItemByPage(IPage<RoomItemVo> roomItemVoPage, RoomQueryVo queryVo) {
@@ -85,6 +87,9 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 		roomDetailVo.setPaymentTypeList(paymentTypeList);
 		roomDetailVo.setFeeValueVoList(feeValueVoList);
 		roomDetailVo.setLeaseTermList(leaseTermList);
+
+		// 保存浏览历史
+		browsingHistoryService.saveHistoryByRoomId(id, LoginUserHolder.getLoginUser().getUserId());
 		return roomDetailVo;
 	}
 
