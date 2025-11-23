@@ -13,6 +13,16 @@ spring:
       maximum-pool-size: 12 #连接池最大连接数，默认是10
       minimum-idle: 10 #最小空闲连接数量
       pool-name: HikariPool # 连接池名称
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  data:
+    redis:
+      host: 192.168.200.136
+      port: 6379
+      database: 0
+      timeout: 3000ms
+      password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    druid:
 #      # 连接池配置
@@ -56,3 +66,12 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    use-actual-param-name: true
+
+minio:
+  endpoint: http://192.168.200.136:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket-name: lease
+springdoc:
+  default-flat-param-object: true

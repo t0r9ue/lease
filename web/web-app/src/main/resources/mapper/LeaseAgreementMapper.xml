@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lease.web.app.mapper.LeaseAgreementMapper">
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.LeaseAgreement">
+        <!--@mbg.generated-->
+        <!--@Table lease_agreement-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="identification_number" jdbcType="VARCHAR" property="identificationNumber"/>
+        <result column="apartment_id" jdbcType="BIGINT" property="apartmentId"/>
+        <result column="room_id" jdbcType="BIGINT" property="roomId"/>
+        <result column="lease_start_date" jdbcType="DATE" property="leaseStartDate"/>
+        <result column="lease_end_date" jdbcType="DATE" property="leaseEndDate"/>
+        <result column="lease_term_id" jdbcType="BIGINT" property="leaseTermId"/>
+        <result column="rent" jdbcType="DECIMAL" property="rent"/>
+        <result column="deposit" jdbcType="DECIMAL" property="deposit"/>
+        <result column="payment_type_id" jdbcType="BIGINT" property="paymentTypeId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="source_type" jdbcType="TINYINT" property="sourceType"/>
+        <result column="additional_info" jdbcType="VARCHAR" property="additionalInfo"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+
+    <resultMap id="AgreementItemVoMap" type="com.lease.web.app.vo.agreement.AgreementItemVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <collection property="roomGraphVoList" ofType="com.lease.web.app.vo.graph.GraphVo" autoMapping="true"/>
+    </resultMap>
+
+    <resultMap id="AgreementDetailVoMap" type="com.lease.web.app.vo.agreement.AgreementDetailVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <collection property="apartmentGraphVoList" ofType="com.lease.web.app.vo.graph.GraphVo">
+            <result property="url" column="apartment_graph_url"/>
+            <result property="name" column="apartment_graph_name"/>
+        </collection>
+        <collection property="roomGraphVoList" ofType="com.lease.web.app.vo.graph.GraphVo">
+            <result property="url" column="room_graph_url"/>
+            <result property="name" column="room_graph_name"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, phone, `name`, identification_number, apartment_id, room_id, lease_start_date,
+        lease_end_date, lease_term_id, rent, deposit, payment_type_id, `status`, source_type,
+        additional_info, create_time, update_time, is_deleted
+    </sql>
+
+    <select id="selectListItemByPhoneNumber" resultMap="AgreementItemVoMap">
+        SELECT la.id,
+               la.lease_start_date,
+               la.lease_end_date,
+               la.rent,
+               la.status lease_status,
+               la.source_type,
+               ai.name   apartment_name,
+               ri.room_number,
+               gi.name,
+               gi.url
+        FROM lease_agreement la
+                 LEFT JOIN apartment_info ai ON la.apartment_id = ai.id AND ai.is_deleted = 0
+                 LEFT JOIN room_info ri ON la.room_id = ri.id AND ri.is_deleted = 0
+                 LEFT JOIN graph_info gi ON la.room_id = gi.item_id AND gi.item_type = 2 AND gi.is_deleted = 0
+        WHERE la.is_deleted = 0
+          AND la.phone = #{phone,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectDetailById" resultMap="AgreementDetailVoMap">
+        SELECT la.id,
+               la.phone,
+               la.name,
+               la.identification_number,
+               la.apartment_id,
+               la.room_id,
+               la.lease_start_date,
+               la.lease_end_date,
+               la.lease_term_id,
+               la.rent,
+               la.deposit,
+               la.payment_type_id,
+               la.status,
+               la.source_type,
+               la.additional_info,
+               la.create_time,
+               la.update_time,
+               la.is_deleted,
+               ai.name,
+               ri.room_number,
+               lt.month_count lease_term_month_count,
+               lt.unit        lease_term_unit,
+               pt.name        payment_type_name,
+               agi.url        apartment_graph_url,
+               agi.name       apartment_graph_name,
+               rgi.url        room_graph_url,
+               rgi.name       room_graph_name
+        FROM lease_agreement la
+                 LEFT JOIN apartment_info ai ON la.apartment_id = ai.id AND ai.is_deleted = 0
+                 LEFT JOIN room_info ri ON la.room_id = ri.id AND ri.is_deleted = 0
+                 LEFT JOIN lease_term lt ON la.lease_term_id = lt.id AND lt.is_deleted = 0
+                 LEFT JOIN payment_type pt ON la.payment_type_id = pt.id AND pt.is_deleted = 0
+                 LEFT JOIN graph_info agi ON la.apartment_id = agi.item_id AND agi.item_type = 1 AND agi.is_deleted = 0
+                 LEFT JOIN graph_info rgi ON la.room_id = rgi.item_id AND rgi.item_type = 2 AND rgi.is_deleted = 0
+        WHERE la.is_deleted = 0
+          AND la.id = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

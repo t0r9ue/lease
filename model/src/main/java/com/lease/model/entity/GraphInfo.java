@@ -4,11 +4,17 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.lease.model.enums.ItemType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Schema(description = "图片信息表")
 @TableName(value = "graph_info")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class GraphInfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

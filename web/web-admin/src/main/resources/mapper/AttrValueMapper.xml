@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lease.web.admin.mapper.AttrValueMapper">
-  <resultMap id="BaseResultMap" type="com.lease.model.entity.AttrValue">
-    <!--@mbg.generated-->
-    <!--@Table attr_value-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="attr_key_id" jdbcType="BIGINT" property="attrKeyId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, `name`, attr_key_id, create_time, update_time, is_deleted
-  </sql>
+    <resultMap id="BaseResultMap" type="com.lease.model.entity.AttrValue">
+        <!--@mbg.generated-->
+        <!--@Table attr_value-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="attr_key_id" jdbcType="BIGINT" property="attrKeyId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        `name`,
+        attr_key_id,
+        create_time,
+        update_time,
+        is_deleted
+    </sql>
+
+    <select id="selectAttrValueVoByRoomId" resultType="com.lease.web.admin.vo.attr.AttrValueVo">
+        SELECT av.id, av.name, av.attr_key_id, ak.name attr_key_name
+        FROM attr_value av
+                 join attr_key ak
+                      ON av.attr_key_id = ak.id
+        WHERE av.is_deleted = 0
+          AND ak.is_deleted = 0
+          AND av.id in (SELECT id FROM room_attr_value WHERE room_id = #{id,jdbcType=BIGINT})
+    </select>
 </mapper>
