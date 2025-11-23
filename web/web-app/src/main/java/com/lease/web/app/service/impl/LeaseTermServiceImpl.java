@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lease.model.entity.LeaseTerm;
 import com.lease.web.app.mapper.LeaseTermMapper;
 import com.lease.web.app.service.LeaseTermService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author liubo
@@ -12,9 +15,16 @@ import org.springframework.stereotype.Service;
  * @createDate 2023-07-26 11:12:39
  */
 @Service
+@RequiredArgsConstructor
 public class LeaseTermServiceImpl extends ServiceImpl<LeaseTermMapper, LeaseTerm>
         implements LeaseTermService {
 
+	private final LeaseTermMapper leaseTermMapper;
+
+	@Override
+	public List<LeaseTerm> getByRoomId(Long id) {
+		return leaseTermMapper.selectByRoomId(id);
+	}
 }
 
 

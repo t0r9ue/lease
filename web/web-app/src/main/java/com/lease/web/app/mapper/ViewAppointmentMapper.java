@@ -2,6 +2,9 @@ package com.lease.web.app.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lease.model.entity.ViewAppointment;
+import com.lease.web.app.vo.appointment.AppointmentItemVo;
+
+import java.util.List;
 
 /**
  * @author  孙依鹏
@@ -10,4 +13,5 @@ import com.lease.model.entity.ViewAppointment;
  */
     
 public interface ViewAppointmentMapper extends BaseMapper<ViewAppointment> {
+	List<AppointmentItemVo> selectListItemByUserId(Long userId);
 }
